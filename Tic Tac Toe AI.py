@@ -1,11 +1,12 @@
-def printBoard(board):
-    print(board[1] + '|' + board[2] + '|' + board[3])
-    print('-+-+-')
-    print(board[4] + '|' + board[5] + '|' + board[6])
-    print('-+-+-')
-    print(board[7] + '|' + board[8] + '|' + board[9])
-    print("\n")
+import streamlit as st
 
+def printBoard(board):
+    st.write(f"{board[1]}|{board[2]}|{board[3]}")
+    st.write("-+-+-")
+    st.write(f"{board[4]}|{board[5]}|{board[6]}")
+    st.write("-+-+-")
+    st.write(f"{board[7]}|{board[8]}|{board[9]}")
+    st.write("\n")
 
 def spaceIsFree(position):
     if board[position] == ' ':
@@ -13,31 +14,26 @@ def spaceIsFree(position):
     else:
         return False
 
-
 def insertLetter(letter, position):
     if spaceIsFree(position):
         board[position] = letter
         printBoard(board)
         if (checkDraw()):
-            print("Draw!")
-            exit()
+            st.write("Draw!")
+            st.stop()
         if checkForWin():
             if letter == 'X':
-                print("Bot wins!")
-                exit()
+                st.write("Bot wins!")
+                st.stop()
             else:
-                print("Player wins!")
-                exit()
-
+                st.write("Player wins!")
+                st.stop()
         return
-
-
     else:
-        print("Can't insert there!")
-        position = int(input("Please enter new position:  "))
+        st.write("Can't insert there!")
+        position = st.number_input("Please enter new position:", min_value=1, max_value=9)
         insertLetter(letter, position)
         return
-
 
 def checkForWin():
     if (board[1] == board[2] and board[1] == board[3] and board[1] != ' '):
@@ -59,7 +55,6 @@ def checkForWin():
     else:
         return False
 
-
 def checkWhichMarkWon(mark):
     if board[1] == board[2] and board[1] == board[3] and board[1] == mark:
         return True
@@ -80,19 +75,16 @@ def checkWhichMarkWon(mark):
     else:
         return False
 
-
 def checkDraw():
     for key in board.keys():
         if (board[key] == ' '):
             return False
     return True
 
-
 def playerMove():
-    position = int(input("Enter the position for 'O':  "))
+    position = st.number_input("Enter the position for 'O':", min_value=1, max_value=9)
     insertLetter(player, position)
     return
-
 
 def compMove():
     bestScore = -800
@@ -105,10 +97,8 @@ def compMove():
             if (score > bestScore):
                 bestScore = score
                 bestMove = key
-
     insertLetter(bot, bestMove)
     return
-
 
 def minimax(board, depth, isMaximizing):
     if (checkWhichMarkWon(bot)):
@@ -117,7 +107,6 @@ def minimax(board, depth, isMaximizing):
         return -1
     elif (checkDraw()):
         return 0
-
     if (isMaximizing):
         bestScore = -800
         for key in board.keys():
@@ -128,7 +117,6 @@ def minimax(board, depth, isMaximizing):
                 if (score > bestScore):
                     bestScore = score
         return bestScore
-
     else:
         bestScore = 800
         for key in board.keys():
@@ -140,24 +128,21 @@ def minimax(board, depth, isMaximizing):
                     bestScore = score
         return bestScore
 
-
 board = {1: ' ', 2: ' ', 3: ' ',
          4: ' ', 5: ' ', 6: ' ',
          7: ' ', 8: ' ', 9: ' '}
 
-printBoard(board)
-print("Computer goes first! Good luck.")
-print("Positions are as follow:")
-print("1, 2, 3 ")
-print("4, 5, 6 ")
-print("7, 8, 9 ")
-print("\n")
+st.title("Tic Tac Toe")
+
+st.write("Computer goes first! Good luck.")
+st.write("Positions are as follow:")
+st.write("1, 2, 3 ")
+st.write("4, 5, 6 ")
+st.write("7, 8, 9 ")
+st.write("\n")
+
 player = 'O'
 bot = 'X'
-
-
-global firstComputerMove
-firstComputerMove = True
 
 while not checkForWin():
     compMove()
